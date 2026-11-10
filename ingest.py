@@ -30,6 +30,8 @@ def main():
     args = p.parse_args()
     if not (args.folder or args.adb or args.ios):
         p.error("give a folder, --adb or --ios")
+    if args.folder and not args.folder.is_dir():
+        p.error(f"{args.folder} is not a folder")
 
     db = sqlite3.connect(ROOT / "library.db")
     if not db.execute("select 1 from apps where id = ?", (args.app_id,)).fetchone():

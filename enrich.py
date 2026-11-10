@@ -108,7 +108,11 @@ def label(db, limit, model):
             image = {"type": "url", "url": url}
         else:
             mime = "image/jpeg" if url.lower().endswith((".jpg", ".jpeg")) else "image/png"
-            image = {"type": "base64", "media_type": mime, "data": base64.b64encode(load(url)).decode()}
+            try:
+                image = {"type": "base64", "media_type": mime, "data": base64.b64encode(load(url)).decode()}
+            except OSError as e:  # capture file moved or deleted: skip it, keep the run going
+                print(f"  skip {url}: {e}", file=sys.stderr)
+                return None
         kind = "an App Store screenshot (may be a promo frame)" if source == "appstore" else "a real in-app screen"
         try:
             res = client.beta.messages.parse(

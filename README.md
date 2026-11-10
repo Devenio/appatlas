@@ -70,6 +70,7 @@ python3 ingest.py <app_id> ./my-screens --flow Paywall  # ...or a folder of scre
 uv run enrich.py colors                           # palettes and similarity for new screens (free)
 uv run enrich.py label --limit 500                # Claude vision labels (paid, resumable)
 uv run server.py check                            # self-check
+uv run --with "mcp>=2,<3" --with pillow --with anthropic python tests/test_regressions.py
 ```
 
 The iOS Simulator can't run App Store apps, so real iOS flows need a physical

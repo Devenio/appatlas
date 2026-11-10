@@ -41,8 +41,9 @@ SORTS = {"rank": RANK, "rating": "a.rating desc, a.rating_count desc",
 
 
 def fts(query):
-    """Free text to an FTS5 OR-query; each word quoted so user input can't be FTS syntax."""
-    return " OR ".join('"' + w.replace('"', '""') + '"' for w in query.split())
+    """Free text to an FTS5 OR-query; each word quoted so user input can't be FTS syntax.
+    NUL is dropped because FTS5 ends the query string there."""
+    return " OR ".join('"' + w.replace('"', '""') + '"' for w in query.replace("\0", " ").split())
 
 
 def clean(row):
@@ -56,6 +57,9 @@ def clean(row):
 
 
 def paged(sql, args, cursor):
+    if cursor and not (cursor.isascii() and cursor.isdigit() and len(cursor) < 10):
+        return {"error": f"Invalid cursor {cursor!r}. Pass next_cursor exactly as returned, "
+                         "or omit it to start from page one."}
     offset = int(cursor or 0)
     rows = db.execute(f"{sql} limit {PAGE + 1} offset {offset}", args).fetchall()
     return {"items": [clean(r) for r in rows[:PAGE]], "next_cursor": str(offset + PAGE) if len(rows) > PAGE else None}
@@ -76,7 +80,7 @@ def search_apps(query: str = "", genre: str | None = None, rating_min: float | N
     e.g. "Health & Fitness". `released_after` is an ISO date. `sort` defaults to relevance with a query, else
     rank (top-grossing chart position, the revenue proxy). Pass `next_cursor` back to continue."""
     join, conds, args = "", [], []
-    if query.strip():
+    if fts(query):  # empty after cleanup = no text filter
         join = "join apps_fts on apps_fts.rowid = a.id"
         conds.append("apps_fts match ?")
         args.append(fts(query))
@@ -126,7 +130,7 @@ def search_screens(query: str = "", flow: str | None = None, screen_type: str | 
     descriptions, UI elements, flows and the app's name and genres. Filters: `flow` (see list_flows),
     `screen_type` (e.g. paywall, onboarding, home), `element` (see list_ui_elements), primary `genre`, `app_id`."""
     join, conds, args = "", [], []
-    if query.strip():
+    if fts(query):  # empty after cleanup = no text filter
         join = "join screens_fts on screens_fts.rowid = s.rowid"
         conds.append("screens_fts match ?")
         args.append(fts(query))
