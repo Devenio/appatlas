@@ -1,0 +1,11 @@
+{
+  "name": "appatlas",
+  "version": "1.0.0",
+  "description": "Free design library of top-grossing iOS apps as an MCP server, plus skills to research their screens, flows and paywalls and build from what wins.",
+  "author": { "name": "Nima Shahbazi" },
+  "license": "MIT",
+  "keywords": ["mcp", "design", "ui", "ux", "ios", "mobile", "onboarding", "paywall", "expo", "react-native"],
+  "mcpServers": {
+    "appatlas": { "command": "uv", "args": ["run", "-q", "${CLAUDE_PLUGIN_ROOT}/server.py"] }
+  }
+}

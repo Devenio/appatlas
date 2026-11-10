@@ -1,0 +1,11 @@
+{
+  "name": "appatlas",
+  "owner": { "name": "Nima Shahbazi" },
+  "plugins": [
+    {
+      "name": "appatlas",
+      "source": "./",
+      "description": "Free design library of top-grossing iOS apps as an MCP server, plus research and app-design skills."
+    }
+  ]
+}
