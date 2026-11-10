@@ -31,7 +31,7 @@ You need [uv](https://docs.astral.sh/uv/). The server installs its one dependenc
 **Claude Code, as a plugin** (MCP server and both skills):
 
 ```
-/plugin marketplace add git@github.com:Devenio/appatlas.git
+/plugin marketplace add Devenio/appatlas
 /plugin install appatlas@appatlas
 ```
 
